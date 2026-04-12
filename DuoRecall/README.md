@@ -24,17 +24,17 @@ A beautiful, Duolingo-inspired flashcard application built with React Native and
 
 *Beautiful animated splash screen and home dashboard with progress tracking*
 
-### Create & Edit Decks
-<img src="https://github.com/user-attachments/assets/f7cff307-125a-423a-b92b-719ac5859a39" width="250" alt="Create Deck" />
-<img src="https://github.com/user-attachments/assets/69b373e0-eac2-4fbf-ab03-403a85114d90" width="250" alt="Edit Deck" />
-
-*Create custom decks and add flashcards with an intuitive editor*
-
 ### Import Lessons
-<img src="https://github.com/user-attachments/assets/9bca0306-7173-4b4c-9b54-617f0e9820ff" width="250" alt="Import Lessons" />
-<img src="https://github.com/user-attachments/assets/579048c2-cf1a-42ef-a55f-76766c5c8bd8" width="250" alt="Import Success" />
+<img src="https://github.com/user-attachments/assets/f7cff307-125a-423a-b92b-719ac5859a39" width="250" alt="Import Lessons" />
+<img src="https://github.com/user-attachments/assets/69b373e0-eac2-4fbf-ab03-403a85114d90" width="250" alt="Import" />
 
 *Browse and download lessons organized by language with beautiful success modals*
+
+### Create & Edit Decks
+<img src="https://github.com/user-attachments/assets/9bca0306-7173-4b4c-9b54-617f0e9820ff" width="250" alt="Create Deck" />
+<img src="https://github.com/user-attachments/assets/579048c2-cf1a-42ef-a55f-76766c5c8bd8" width="250" alt="Edit Deck" />
+
+*Create custom decks and add flashcards with an intuitive editor*
 
 ### Quiz Mode
 <img src="https://github.com/user-attachments/assets/157a5be7-12a5-4e4a-bf75-4d7949d29ebb" width="250" alt="Quiz Screen" />
