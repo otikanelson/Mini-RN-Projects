@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "lastUpdated": "2026-04-12",
   "languages": [
     {
@@ -15,7 +15,15 @@
           "description": "Learn basic Spanish words and phrases",
           "cardCount": 33,
           "version": "1.1",
-          "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/spanish/basics.csv"
+          "csvUrl": "https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/spanish/basics.csv"
+        },
+        {
+          "id": "spanish-greetings",
+          "title": "Greetings",
+          "description": "Learn how to greet people in Spanish",
+          "cardCount": 20,
+          "version": "1.0",
+          "csvUrl": "https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/spanish/greetings.csv"
         }
       ]
     },
@@ -32,7 +40,7 @@
           "description": "Learn basic French words and phrases",
           "cardCount": 31,
           "version": "1.0",
-          "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/french/basics.csv"
+          "csvUrl": "https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/french/basics.csv"
         }
       ]
     },
@@ -49,7 +57,7 @@
           "description": "Expand your English vocabulary",
           "cardCount": 31,
           "version": "1.0",
-          "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/english/vocabulary.csv"
+          "csvUrl": "https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/english/vocabulary.csv"
         }
       ]
     }

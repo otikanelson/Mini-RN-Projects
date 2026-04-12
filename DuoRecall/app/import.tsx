@@ -9,8 +9,8 @@ import { Deck } from '../types';
 import { parseCSV } from '../utils/csvParser';
 import DuoModal from '../components/DuoModal';
 
-// Manifest URL - Update this to your GitHub raw URL
-const MANIFEST_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/manifest.json';
+// Manifest URL - Points to the GitHub repository
+const MANIFEST_URL = 'https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/manifest.json';
 
 interface CloudDeck {
   id: string;
