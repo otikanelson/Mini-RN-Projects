@@ -25,6 +25,8 @@ A beautiful, Duolingo-inspired flashcard application built with React Native and
 
 ### Import Lessons
 <img src="https://github.com/user-attachments/assets/f7cff307-125a-423a-b92b-719ac5859a39" width="250" alt="Import Lessons" />
+<img src="https://github.com/user-attachments/assets/69b373e0-eac2-4fbf-ab03-403a85114d90" width="250" alt="Quiz" />
+
 *Browse and download lessons organized by language with beautiful success modals*
 
 ### Create & Edit Decks
@@ -35,7 +37,7 @@ A beautiful, Duolingo-inspired flashcard application built with React Native and
 
 ### Quiz Mode
 <img src="https://github.com/user-attachments/assets/157a5be7-12a5-4e4a-bf75-4d7949d29ebb" width="250" alt="Quiz Screen" />
-<img src="https://github.com/user-attachments/assets/69b373e0-eac2-4fbf-ab03-403a85114d90" width="250" alt="Import" />
+<img src="https://github.com/user-attachments/assets/69b373e0-eac2-4fbf-ab03-403a85114d90" width="250" alt="Quiz" />
 
 *Interactive flashcard quiz with smooth flip animations and progress tracking*
 
