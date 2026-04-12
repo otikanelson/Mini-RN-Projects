@@ -18,9 +18,9 @@ A beautiful, Duolingo-inspired flashcard application built with React Native and
 <div align="center">
 
 ### Splash Screen & Home
-![WhatsApp Image 2026-04-13 at 12 10 43 AM](https://github.com/user-attachments/assets/dbe1a0d5-018e-4066-9f15-4785390a9e01)
-<img src="https://github.com/user-attachments/assets/ec6ce80a-71c1-4a85-9c86-4d99a408d80e" width="250" alt="Splash Screen" />
-<img src="https://github.com/user-attachments/assets/469707de-89e9-4dbe-b302-a1bece07ad84" width="250" alt="Home Screen" />
+<img src="https://github.com/user-attachments/assets/dbe1a0d5-018e-4066-9f15-4785390a9e01" width="250" alt="Splash Screen" />
+<img src="https://github.com/user-attachments/assets/ec6ce80a-71c1-4a85-9c86-4d99a408d80e" width="250" alt="Home Screen" />
+<img src="https://github.com/user-attachments/assets/469707de-89e9-4dbe-b302-a1bece07ad84" width="250" alt="Quiz Screen" />
 
 *Beautiful animated splash screen and home dashboard with progress tracking*
 
