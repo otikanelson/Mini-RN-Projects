@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Image, Animated, StyleSheet, Dimensions } from 'react-native';
+import { View, Image, Animated, StyleSheet, Dimensions, Text } from 'react-native';
 
 const { height } = Dimensions.get('window');
 
@@ -9,6 +9,7 @@ interface AnimatedSplashProps {
 
 export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
   const translateY = useRef(new Animated.Value(height)).current;
+  const textOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Start animation sequence
@@ -19,16 +20,23 @@ export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
         duration: 600,
         useNativeDriver: true,
       }),
-      // Bounce
-      Animated.spring(translateY, {
-        toValue: height * 0.4,
-        friction: 4,
-        tension: 40,
-        useNativeDriver: true,
-      }),
+      // Bounce and fade in text
+      Animated.parallel([
+        Animated.spring(translateY, {
+          toValue: height * 0.4,
+          friction: 4,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+        Animated.timing(textOpacity, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]),
       // Wait a moment
       Animated.delay(800),
-      // Slide down
+      // Slide down (only the image)
       Animated.timing(translateY, {
         toValue: -height,
         duration: 500,
@@ -53,6 +61,16 @@ export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
           resizeMode="contain"
         />
       </Animated.View>
+      <Animated.Text
+        style={[
+          styles.title,
+          {
+            opacity: textOpacity,
+          },
+        ]}
+      >
+        DuoRecall
+      </Animated.Text>
     </View>
   );
 }
@@ -71,5 +89,12 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
+  },
+  title: {
+    position: 'absolute',
+    fontSize: 48,
+    fontFamily: 'FeatherBold',
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
 });
