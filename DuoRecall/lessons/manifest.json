@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-04-12",
+  "languages": [
+    {
+      "id": "spanish",
+      "name": "Spanish",
+      "icon": "flag",
+      "color": "#FF9600",
+      "bgColor": "#FFF4E6",
+      "lessons": [
+        {
+          "id": "spanish-basics",
+          "title": "Basics",
+          "description": "Learn basic Spanish words and phrases",
+          "cardCount": 33,
+          "version": "1.1",
+          "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/spanish/basics.csv"
+        }
+      ]
+    },
+    {
+      "id": "french",
+      "name": "French",
+      "icon": "flag",
+      "color": "#1CB0F6",
+      "bgColor": "#E6F7FF",
+      "lessons": [
+        {
+          "id": "french-basics",
+          "title": "Basics",
+          "description": "Learn basic French words and phrases",
+          "cardCount": 31,
+          "version": "1.0",
+          "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/french/basics.csv"
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "name": "English",
+      "icon": "flag",
+      "color": "#58CC02",
+      "bgColor": "#F0FFE6",
+      "lessons": [
+        {
+          "id": "english-vocabulary",
+          "title": "Vocabulary",
+          "description": "Expand your English vocabulary",
+          "cardCount": 31,
+          "version": "1.0",
+          "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/english/vocabulary.csv"
+        }
+      ]
+    }
+  ]
+}

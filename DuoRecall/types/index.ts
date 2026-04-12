@@ -9,4 +9,6 @@ export interface Deck {
     title: string;
     description: string;
     cards: CardData[];
+    version?: string; // Track deck version for updates
+    sourceId?: string; // Track which cloud deck this came from
 }

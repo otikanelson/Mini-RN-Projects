@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
-
+import { View, Text, StyleSheet, Pressable, Platform, TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface CardFormProps {
     onAddDeck: (title: string, description: string) => void;
@@ -22,94 +21,172 @@ const AddForm: React.FC<CardFormProps> = ({ onAddDeck, onClose }) => {
     };
 
     return (
-        <View style={formStyles.overlay}>
-            <View style={formStyles.formContainer}>
-                <Text style={formStyles.formTitle}>Add New Deck</Text>
+        <Pressable style={formStyles.overlay} onPress={onClose}>
+            <Pressable style={formStyles.formContainer} onPress={(e) => e.stopPropagation()}>
+                <View style={formStyles.headerContainer}>
+                    <View style={formStyles.iconContainer}>
+                        <Ionicons name="add-circle" size={40} color="#58CC02" />
+                    </View>
+                    <Text style={formStyles.formTitle}>Create New Deck</Text>
+                    <Text style={formStyles.formSubtitle}>Start your learning journey</Text>
+                </View>
                 
-                <TextInput
-                    style={formStyles.input}
-                    placeholder="Title (e.g., French Vocab)"
-                    value={title}
-                    onChangeText={setTitle}
-                />
-                <TextInput
-                    style={formStyles.input}
-                    placeholder="Description (e.g., 50 common phrases)"
-                    value={description}
-                    onChangeText={setDescription}
-                    multiline
-                />
+                <View style={formStyles.inputGroup}>
+                    <View style={formStyles.labelContainer}>
+                        <Ionicons name="book" size={18} color="#1CB0F6" />
+                        <Text style={formStyles.label}>Deck Title</Text>
+                    </View>
+                    <TextInput
+                        style={formStyles.input}
+                        placeholder="e.g., Spanish Basics"
+                        placeholderTextColor="#AFAFAF"
+                        value={title}
+                        onChangeText={setTitle}
+                    />
+                </View>
+
+                <View style={formStyles.inputGroup}>
+                    <View style={formStyles.labelContainer}>
+                        <Ionicons name="document-text" size={18} color="#58CC02" />
+                        <Text style={formStyles.label}>Description</Text>
+                    </View>
+                    <TextInput
+                        style={[formStyles.input, formStyles.textArea]}
+                        placeholder="e.g., Common phrases and vocabulary"
+                        placeholderTextColor="#AFAFAF"
+                        value={description}
+                        onChangeText={setDescription}
+                        multiline
+                        numberOfLines={3}
+                    />
+                </View>
 
                 <View style={formStyles.buttonRow}>
-                    <TouchableOpacity style={formStyles.cancelButton} onPress={onClose}>
-                        <Text style={formStyles.buttonText}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={formStyles.addButton} onPress={handleSubmit}>
-                        <Text style={formStyles.buttonText}>Add Card</Text>
-                    </TouchableOpacity>
+                    <Pressable 
+                        style={({ pressed }) => [
+                            formStyles.button,
+                            formStyles.cancelButton,
+                            pressed && formStyles.buttonPressed
+                        ]}
+                        onPress={onClose}
+                    >
+                        <Text style={formStyles.cancelButtonText}>Cancel</Text>
+                    </Pressable>
+                    <Pressable 
+                        style={({ pressed }) => [
+                            formStyles.button,
+                            formStyles.addButton,
+                            pressed && formStyles.buttonPressed
+                        ]}
+                        onPress={handleSubmit}
+                    >
+                        <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
+                        <Text style={formStyles.addButtonText}>Create Deck</Text>
+                    </Pressable>
                 </View>
-            </View>
-        </View>
+            </Pressable>
+        </Pressable>
     );
 };
-
 
 const formStyles = StyleSheet.create({
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',
     },
     formContainer: {
-        width: Platform.OS == "web" ? '50%' : '85%',
-        padding: 20,
-        backgroundColor: 'white',
-        borderRadius: 15,
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
+        width: Platform.OS == "web" ? '50%' : '90%',
+        padding: 24,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        borderWidth: 2,
+        borderBottomWidth: 4,
+        borderColor: '#E5E5E5',
+    },
+    headerContainer: {
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    iconContainer: {
+        marginBottom: 12,
     },
     formTitle: {
-        fontSize: 18,
+        fontSize: 24,
         fontFamily: "FeatherBold",
-        marginBottom: 15,
-        textAlign: 'center',
+        color: '#3C3C3C',
+        marginBottom: 4,
+    },
+    formSubtitle: {
+        fontSize: 14,
+        fontFamily: "FeatherBold",
+        color: '#AFAFAF',
+    },
+    inputGroup: {
+        marginBottom: 16,
+    },
+    labelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+        gap: 6,
+    },
+    label: {
+        fontSize: 14,
+        fontFamily: "FeatherBold",
+        color: '#3C3C3C',
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 12,
-        marginBottom: 10,
-        borderRadius: 8,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#F7F7F7',
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: '#E5E5E5',
+        padding: 14,
+        fontSize: 16,
+        fontFamily: "FeatherBold",
+        color: '#3C3C3C',
+    },
+    textArea: {
+        minHeight: 80,
+        textAlignVertical: 'top',
     },
     buttonRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 10,
+        gap: 12,
+        marginTop: 8,
     },
-    addButton: {
-        backgroundColor: '#1e90ff',
-        padding: 12,
-        borderRadius: 8,
+    button: {
         flex: 1,
-        marginLeft: 10,
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        paddingVertical: 16,
+        borderRadius: 16,
+        borderWidth: 2,
+        borderBottomWidth: 4,
+        borderColor: 'rgba(0,0,0,0.1)',
+    },
+    buttonPressed: {
+        transform: [{ translateY: 2 }],
+        borderBottomWidth: 2,
     },
     cancelButton: {
-        backgroundColor: '#e0e0e0',
-        padding: 12,
-        borderRadius: 8,
-        flex: 1,
-        marginRight: 10,
-        alignItems: 'center',
+        backgroundColor: '#E5E5E5',
     },
-    buttonText: {
-        color: 'white',
+    addButton: {
+        backgroundColor: '#58CC02',
+    },
+    cancelButtonText: {
+        color: '#3C3C3C',
         fontFamily: "FeatherBold",
+        fontSize: 16,
+    },
+    addButtonText: {
+        color: '#FFFFFF',
+        fontFamily: "FeatherBold",
+        fontSize: 16,
     },
 });
 

@@ -1,0 +1,31 @@
+{
+  "decks": [
+    {
+      "id": "french-basics",
+      "title": "French Basics",
+      "description": "Essential French words and phrases for beginners",
+      "language": "French",
+      "cardCount": 30,
+      "fileName": "french_basics.csv",
+      "downloadUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/assets/decks/french_basics.csv"
+    },
+    {
+      "id": "spanish-basics",
+      "title": "Spanish Basics",
+      "description": "Essential Spanish words and phrases for beginners",
+      "language": "Spanish",
+      "cardCount": 30,
+      "fileName": "spanish_basics.csv",
+      "downloadUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/assets/decks/spanish_basics.csv"
+    },
+    {
+      "id": "english-vocabulary",
+      "title": "English Vocabulary",
+      "description": "Advanced English vocabulary words with definitions",
+      "language": "English",
+      "cardCount": 30,
+      "fileName": "english_vocabulary.csv",
+      "downloadUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/assets/decks/english_vocabulary.csv"
+    }
+  ]
+}

@@ -54,18 +54,14 @@ export const loadQuizContent = async (deckId: string): Promise<Deck | null> => {
     }
 };
 
-export const loadAllDecks = async (): Promise<Partial<Deck>[]> => {
+export const loadAllDecks = async (): Promise<Deck[]> => {
     try {
         const serializedDecks = await AsyncStorage.getItem(DECKS_STORAGE_KEY);
         if (serializedDecks === null) {
             return [];
         }
         const decks: Deck[] = JSON.parse(serializedDecks);
-        return decks.map(deck => ({
-            id: deck.id,
-            title: deck.title,
-            description: deck.description,
-        }));
+        return decks; // Return full decks with cards
     } catch (error) {
         console.error('Error loading all decks:', error);
         return [];

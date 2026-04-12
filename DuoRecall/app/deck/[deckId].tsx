@@ -8,12 +8,14 @@ import {
     ScrollView,
     ActivityIndicator,
     Platform,
+    Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Deck, CardData } from '../../types';
 import { saveDeck, loadDeckContent } from '../../storage/DeckStorage';
-import { FontAwesome5, AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 const CardItem: React.FC<{ 
     card: CardData; 
@@ -24,29 +26,47 @@ const CardItem: React.FC<{
     return (
         <View style={cardStyles.cardContainer}>
             <View style={cardStyles.cardHeader}>
-                <Text style={cardStyles.cardNumber}>Card {index + 1}</Text>
-                <TouchableOpacity style={cardStyles.iconButton} onPress={() => onRemove(card.id)}>
-                    <FontAwesome5 name="trash-alt" size={16} color="#FF4B4B" />
-                </TouchableOpacity>
+                <View style={cardStyles.cardNumberBadge}>
+                    <Text style={cardStyles.cardNumber}>{index + 1}</Text>
+                </View>
+                <Pressable 
+                    style={({ pressed }) => [
+                        cardStyles.deleteButton,
+                        pressed && cardStyles.deleteButtonPressed
+                    ]} 
+                    onPress={() => onRemove(card.id)}
+                >
+                    <Ionicons name="trash" size={20} color="#FFFFFF" />
+                </Pressable>
             </View>
 
-            <View style={cardStyles.inputColumn}>
+            <View style={cardStyles.inputGroup}>
+                <View style={cardStyles.labelContainer}>
+                    <Ionicons name="help-circle" size={18} color="#1CB0F6" />
+                    <Text style={cardStyles.label}>Question</Text>
+                </View>
                 <TextInput
                     style={cardStyles.input}
-                    placeholder="Enter question"
+                    placeholder="What's the question?"
                     placeholderTextColor="#AFAFAF"
                     value={card.question}
                     onChangeText={(text) => onUpdate(card.id, 'question', text)}
+                    multiline
                 />
             </View>
 
-            <View style={cardStyles.inputColumn}>
+            <View style={cardStyles.inputGroup}>
+                <View style={cardStyles.labelContainer}>
+                    <Ionicons name="checkmark-circle" size={18} color="#58CC02" />
+                    <Text style={cardStyles.label}>Answer</Text>
+                </View>
                 <TextInput
                     style={cardStyles.input}
-                    placeholder="Enter answer"
+                    placeholder="What's the answer?"
                     placeholderTextColor="#AFAFAF"
                     value={card.answer}
                     onChangeText={(text) => onUpdate(card.id, 'answer', text)}
+                    multiline
                 />
             </View>
         </View>
@@ -56,41 +76,72 @@ const CardItem: React.FC<{
 const cardStyles = StyleSheet.create({
     cardContainer: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 20, 
+        borderRadius: 16,
         padding: 20,
-        marginHorizontal: 15,
-        marginBottom: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 8,
+        marginHorizontal: 20,
+        marginBottom: 16,
+        borderWidth: 2,
+        borderBottomWidth: 4,
+        borderColor: '#E5E5E5',
     },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 15,
+        marginBottom: 16,
+    },
+    cardNumberBadge: {
+        backgroundColor: '#1CB0F6',
+        borderRadius: 20,
+        width: 36,
+        height: 36,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     cardNumber: {
-        fontSize: 18,
+        fontSize: 16,
         fontFamily: "FeatherBold",
-        color: '#4B4B4B',
+        color: '#FFFFFF',
     },
-    iconButton: {
-        marginLeft: 15,
+    deleteButton: {
+        backgroundColor: '#FF4B4B',
+        borderRadius: 12,
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderBottomWidth: 3,
+        borderColor: 'rgba(0,0,0,0.1)',
     },
-    inputColumn: {
-        marginBottom: 15,
+    deleteButtonPressed: {
+        transform: [{ translateY: 1 }],
+        borderBottomWidth: 2,
+    },
+    inputGroup: {
+        marginBottom: 12,
+    },
+    labelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+        gap: 6,
+    },
+    label: {
+        fontSize: 14,
+        fontFamily: "FeatherBold",
+        color: '#3C3C3C',
     },
     input: {
-        backgroundColor: '#F5F5F5',
-        borderRadius: 15,
-        borderWidth: 1,
+        backgroundColor: '#F7F7F7',
+        borderRadius: 12,
+        borderWidth: 2,
         borderColor: '#E5E5E5',
-        padding: 15,
+        padding: 14,
         fontSize: 16,
-        color: '#4B4B4B',
+        color: '#3C3C3C',
+        fontFamily: "FeatherBold",
+        minHeight: 50,
     },
 });
 
@@ -160,28 +211,52 @@ const DeckContentScreen: React.FC = () => {
     const isSaveButtonDormant = deck.cards.length === 0;
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>{title || 'Untitled Deck'}</Text>
-                <TouchableOpacity
-                    style={[
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+            <StatusBar style="dark" backgroundColor="#FFFFFF" />
+            <SafeAreaView style={styles.container} edges={['top']}>
+                <View style={styles.header}>
+                <Pressable 
+                    style={({ pressed }) => [
+                        styles.backButton,
+                        pressed && styles.backButtonPressed
+                    ]}
+                    onPress={() => router.back()}
+                >
+                    <Ionicons name="arrow-back" size={24} color="#3C3C3C" />
+                </Pressable>
+                <View style={styles.headerTitleContainer}>
+                    <Text style={styles.headerTitle} numberOfLines={1}>{title || 'Untitled Deck'}</Text>
+                    <Text style={styles.headerSubtitle}>{deck.cards.length} cards</Text>
+                </View>
+                <Pressable
+                    style={({ pressed }) => [
                         styles.saveButton,
                         isSaveButtonDormant && styles.saveButtonDormant,
+                        pressed && !isSaveButtonDormant && styles.saveButtonPressed
                     ]}
                     disabled={isSaveButtonDormant || isSaving}
                     onPress={handleSaveDeck}
                 >
+                    <Ionicons name="checkmark-circle" size={24} color="#FFFFFF" />
                     <Text style={styles.saveButtonText}>
                         {isSaving ? "Saving..." : "Save"}
                     </Text>
-                </TouchableOpacity>
+                </Pressable>
             </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.contentArea}>
+                <ScrollView 
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 {deck.cards.length === 0 ? (
                     <View style={styles.emptyListContainer}>
+                        <View style={styles.emptyIconContainer}>
+                            <Ionicons name="albums-outline" size={80} color="#E5E5E5" />
+                        </View>
+                        <Text style={styles.emptyListTitle}>No cards yet!</Text>
                         <Text style={styles.emptyListText}>
-                            No cards yet! Tap the plus icon below to create your first flashcard.
+                            Tap the button below to create your first flashcard and start learning.
                         </Text>
                     </View>
                 ) : (
@@ -198,26 +273,37 @@ const DeckContentScreen: React.FC = () => {
             </ScrollView>
 
             <View style={styles.bottomContainer}>
-                <TouchableOpacity style={styles.addButton} onPress={handleAddCard}>
-                    <AntDesign name="plus" size={30} color="white" />
-                </TouchableOpacity>
+                <Pressable 
+                    style={({ pressed }) => [
+                        styles.addButton,
+                        pressed && styles.addButtonPressed
+                    ]}
+                    onPress={handleAddCard}
+                >
+                    <Ionicons name="add" size={32} color="white" />
+                    <Text style={styles.addButtonText}>Add Card</Text>
+                </Pressable>
             </View>
-        </SafeAreaView>
+            </View>
+            </SafeAreaView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
-        marginTop: Platform.OS == "web" ? 0 : Platform.OS == "ios" ? 10 : 15,
-
+        backgroundColor: '#FFFFFF',
+    },
+    contentArea: {
+        flex: 1,
+        backgroundColor: '#F7F7F7',
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#F7F7F7',
     },
     loadingText: {
         marginTop: 10,
@@ -230,29 +316,63 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 16,
         backgroundColor: '#FFFFFF',
+        borderBottomWidth: 2,
+        borderBottomColor: '#E5E5E5',
+    },
+    backButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F7F7F7',
+        borderWidth: 2,
+        borderBottomWidth: 3,
+        borderColor: '#E5E5E5',
+    },
+    backButtonPressed: {
+        transform: [{ translateY: 1 }],
+        borderBottomWidth: 2,
+    },
+    headerTitleContainer: {
+        flex: 1,
+        marginHorizontal: 12,
     },
     headerTitle: {
-        fontSize: 22,
+        fontSize: 20,
         fontFamily: "FeatherBold",
-        color: '#4B4B4B',
-        flex: 1,
+        color: '#3C3C3C',
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        fontFamily: "FeatherBold",
+        color: '#AFAFAF',
+        marginTop: 2,
     },
     saveButton: {
         backgroundColor: '#58CC02',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
         paddingVertical: 10,
-        paddingHorizontal: 15,
-        borderWidth: 3,
-        borderBottomWidth: 7,
-        borderColor: "#459309ff",
-        borderRadius: 15,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderBottomWidth: 4,
+        borderColor: 'rgba(0,0,0,0.1)',
+    },
+    saveButtonPressed: {
+        transform: [{ translateY: 2 }],
+        borderBottomWidth: 2,
     },
     saveButtonDormant: {
         opacity: 0.5,
     },
     saveButtonText: {
-        color: '#fff',
+        color: '#FFFFFF',
+        fontSize: 16,
         fontFamily: "FeatherBold",
     },
     scrollContent: {
@@ -264,31 +384,50 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 40,
-        paddingTop: 50,
+        paddingTop: 80,
+    },
+    emptyIconContainer: {
+        marginBottom: 20,
+    },
+    emptyListTitle: {
+        fontSize: 24,
+        fontFamily: "FeatherBold",
+        color: '#3C3C3C',
+        marginBottom: 12,
     },
     emptyListText: {
         textAlign: 'center',
         color: '#AFAFAF',
         fontSize: 16,
         fontFamily: "FeatherBold",
+        lineHeight: 24,
     },
     bottomContainer: {
         position: 'absolute',
         bottom: 20,
+        left: 20,
         right: 20,
     },
     addButton: {
         backgroundColor: '#58CC02',
-        borderRadius: 50,
-        width: 60,
-        height: 60,
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-        elevation: 8,
+        gap: 8,
+        paddingVertical: 16,
+        borderRadius: 16,
+        borderWidth: 2,
+        borderBottomWidth: 4,
+        borderColor: 'rgba(0,0,0,0.1)',
+    },
+    addButtonPressed: {
+        transform: [{ translateY: 2 }],
+        borderBottomWidth: 2,
+    },
+    addButtonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontFamily: "FeatherBold",
     },
 });
 
