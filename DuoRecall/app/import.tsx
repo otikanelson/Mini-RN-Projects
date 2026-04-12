@@ -8,9 +8,23 @@ import { saveDeck, loadAllDecks } from '../storage/DeckStorage';
 import { Deck } from '../types';
 import { parseCSV } from '../utils/csvParser';
 import DuoModal from '../components/DuoModal';
+import { spanishBasicsCSV, frenchBasicsCSV, englishVocabularyCSV } from '../assets/decks/deckData';
 
 // Manifest URL - Points to the GitHub repository
 const MANIFEST_URL = 'https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/manifest.json';
+
+// Local fallback data
+const LOCAL_LESSONS = {
+  spanish: {
+    basics: { data: spanishBasicsCSV, count: 33 }
+  },
+  french: {
+    basics: { data: frenchBasicsCSV, count: 31 }
+  },
+  english: {
+    vocabulary: { data: englishVocabularyCSV, count: 31 }
+  }
+};
 
 interface CloudDeck {
   id: string;
@@ -19,6 +33,7 @@ interface CloudDeck {
   language: string;
   cardCount: number;
   csvUrl: string;
+  csvData?: string; // For local fallback
   version: string;
 }
 
@@ -54,10 +69,12 @@ export default function ImportScreen() {
     const fetchManifest = async () => {
       try {
         setIsLoading(true);
+        
+        // Try to fetch from GitHub
         const response = await fetch(MANIFEST_URL);
         
         if (!response.ok) {
-          throw new Error('Failed to fetch lessons manifest');
+          throw new Error('Failed to fetch from GitHub');
         }
         
         const manifest = await response.json();
@@ -80,17 +97,73 @@ export default function ImportScreen() {
         }));
 
         setCollections(languageCollections);
-        // Expand all languages by default
         setExpandedLanguages(new Set(languageCollections.map(c => c.id)));
       } catch (error) {
-        console.error('Error fetching manifest:', error);
-        setModalConfig({
-          title: 'Connection Error',
-          message: 'Failed to load available lessons. Please check your internet connection.',
-          icon: 'cloud-offline',
-          iconColor: '#FF4B4B',
-        });
-        setModalVisible(true);
+        console.log('Failed to fetch from GitHub, using local lessons:', error);
+        
+        // Fallback to local lessons
+        const localCollections: LanguageCollection[] = [
+          {
+            id: 'spanish',
+            name: 'Spanish',
+            icon: 'flag',
+            color: '#FF9600',
+            bgColor: '#FFF4E6',
+            lessons: [
+              {
+                id: 'spanish-basics',
+                title: 'Basics',
+                description: 'Learn basic Spanish words and phrases',
+                language: 'Spanish',
+                cardCount: LOCAL_LESSONS.spanish.basics.count,
+                csvUrl: '', // Empty URL means use local data
+                csvData: LOCAL_LESSONS.spanish.basics.data,
+                version: '1.1',
+              },
+            ],
+          },
+          {
+            id: 'french',
+            name: 'French',
+            icon: 'flag',
+            color: '#1CB0F6',
+            bgColor: '#E6F7FF',
+            lessons: [
+              {
+                id: 'french-basics',
+                title: 'Basics',
+                description: 'Learn basic French words and phrases',
+                language: 'French',
+                cardCount: LOCAL_LESSONS.french.basics.count,
+                csvUrl: '',
+                csvData: LOCAL_LESSONS.french.basics.data,
+                version: '1.0',
+              },
+            ],
+          },
+          {
+            id: 'english',
+            name: 'English',
+            icon: 'flag',
+            color: '#58CC02',
+            bgColor: '#F0FFE6',
+            lessons: [
+              {
+                id: 'english-vocabulary',
+                title: 'Vocabulary',
+                description: 'Expand your English vocabulary',
+                language: 'English',
+                cardCount: LOCAL_LESSONS.english.vocabulary.count,
+                csvUrl: '',
+                csvData: LOCAL_LESSONS.english.vocabulary.data,
+                version: '1.0',
+              },
+            ],
+          },
+        ];
+
+        setCollections(localCollections);
+        setExpandedLanguages(new Set(localCollections.map(c => c.id)));
       } finally {
         setIsLoading(false);
       }
@@ -141,14 +214,21 @@ export default function ImportScreen() {
     setDownloading(deck.id);
     
     try {
-      // Fetch CSV from URL
-      const response = await fetch(deck.csvUrl);
+      let csvData: string;
       
-      if (!response.ok) {
-        throw new Error('Failed to download lesson');
+      // Check if we have local data (fallback mode)
+      if (deck.csvData) {
+        csvData = deck.csvData;
+      } else {
+        // Fetch CSV from URL
+        const response = await fetch(deck.csvUrl);
+        
+        if (!response.ok) {
+          throw new Error('Failed to download lesson');
+        }
+        
+        csvData = await response.text();
       }
-      
-      const csvData = await response.text();
       
       // Parse CSV data
       const parseResult = parseCSV(csvData);
