@@ -70,14 +70,22 @@ export default function ImportScreen() {
       try {
         setIsLoading(true);
         
+        console.log('Fetching manifest from:', MANIFEST_URL);
+        
         // Try to fetch from GitHub
         const response = await fetch(MANIFEST_URL);
         
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch from GitHub');
+          const errorText = await response.text();
+          console.log('Error response:', errorText);
+          throw new Error(`Failed to fetch from GitHub: ${response.status}`);
         }
         
         const manifest = await response.json();
+        console.log('Manifest fetched successfully:', manifest);
         
         const languageCollections: LanguageCollection[] = manifest.languages.map((lang: any) => ({
           id: lang.id,
@@ -98,8 +106,10 @@ export default function ImportScreen() {
 
         setCollections(languageCollections);
         setExpandedLanguages(new Set(languageCollections.map(c => c.id)));
+        console.log('Collections set successfully');
       } catch (error) {
         console.log('Failed to fetch from GitHub, using local lessons:', error);
+        console.log('Error details:', error instanceof Error ? error.message : String(error));
         
         // Fallback to local lessons
         const localCollections: LanguageCollection[] = [
