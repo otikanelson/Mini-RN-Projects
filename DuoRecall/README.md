@@ -56,8 +56,8 @@ A beautiful, Duolingo-inspired flashcard application built with React Native and
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-   cd YOUR_REPO/DuoRecall
+   git clone https://github.com/otikanelson/Mini-RN-Projects/DuoRecall.git
+   cd Mini-RN-Projects/DuoRecall
    ```
 
 2. **Install dependencies**
@@ -103,7 +103,7 @@ Add your lesson to `DuoRecall/lessons/manifest.json`:
   "description": "Learn how to greet people in Spanish",
   "cardCount": 20,
   "version": "1.0",
-  "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/spanish/greetings.csv"
+  "csvUrl": "https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/spanish/greetings.csv"
 }
 ```
 
@@ -112,7 +112,7 @@ Add your lesson to `DuoRecall/lessons/manifest.json`:
 In `DuoRecall/app/import.tsx`, update the `MANIFEST_URL`:
 
 ```typescript
-const MANIFEST_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/manifest.json';
+const MANIFEST_URL = 'https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/manifest.json';
 ```
 
 ### Step 4: Commit and push
@@ -202,7 +202,7 @@ const colors = {
       "description": "Learn basic German words",
       "cardCount": 25,
       "version": "1.0",
-      "csvUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/lessons/german/basics.csv"
+      "csvUrl": "https://raw.githubusercontent.com/otikanelson/Mini-RN-Projects/main/DuoRecall/lessons/german/basics.csv"
     }
   ]
 }
@@ -237,7 +237,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 If you have any questions or run into issues:
 
-- Open an [Issue](https://github.com/YOUR_USERNAME/YOUR_REPO/issues)
+- Open an [Issue](https://github.com/otikanelson/Mini-RN-Projects/issues)
 - Check the [Lessons README](./lessons/README.md) for lesson creation help
 
 ## 🔗 Learn More
