@@ -5,42 +5,31 @@ import {
   FlatList,
   Image,
   StyleSheet,
+  SafeAreaView,
   StatusBar,
+  Platform,
   ActivityIndicator,
-  Dimensions,
-  Pressable,
+  Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter, useFocusEffect } from "expo-router";
+import { useRouter } from "expo-router";
 import { loadAllDecks, deleteDeck, saveDeck } from "../storage/DeckStorage";
-import { Deck } from "../types";
+import { Deck, CardData } from "../types";
+import Button from "../components/ui/button";
 import Card from "../components/Card";
 import EmptyListPlaceholder from "../components/EmptyListPlaceholder";
 import AddForm from "../components/AddForm";
 import DeckModal from "../components/DeckModal";
-import DuoModal from "../components/DuoModal";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 
 const HomeScreen: React.FC = () => {
   const router = useRouter();
-  const [decks, setDecks] = useState<Deck[]>([]);
+  const [decks, setDecks] = useState<Partial<Deck>[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
-  const [duoModalVisible, setDuoModalVisible] = useState(false);
-  const [duoModalConfig, setDuoModalConfig] = useState<{
-    title: string;
-    message?: string;
-    icon: keyof typeof Ionicons.glyphMap;
-    iconColor: string;
-    onConfirm?: () => void;
-  }>({
-    title: '',
-    icon: 'checkmark-circle',
-    iconColor: '#58CC02',
-  });
+  const [selectedDeck, setSelectedDeck] = useState<Partial<Deck> | null>(null);
 
   const fetchDecks = useCallback(async () => {
     setIsLoading(true);
@@ -53,18 +42,11 @@ const HomeScreen: React.FC = () => {
     fetchDecks();
   }, [fetchDecks]);
 
-  // Auto-reload decks when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      fetchDecks();
-    }, [fetchDecks])
-  );
-
   const handleAddButtonPress = () => {
     setIsFormVisible(true);
   };
 
-  const handleCardPress = (deck: Deck) => {
+  const handleCardPress = (deck: Partial<Deck>) => {
     setSelectedDeck(deck);
     setIsModalVisible(true);
   };
@@ -89,23 +71,22 @@ const HomeScreen: React.FC = () => {
 
   const handleDeleteDeck = async () => {
     if (!selectedDeck?.id) return;
-    
-    setDuoModalConfig({
-      title: 'Delete Deck',
-      message: 'Are you sure you want to delete this deck? This action cannot be undone.',
-      icon: 'warning',
-      iconColor: '#FF9600',
-      onConfirm: async () => {
-        if (selectedDeck?.id) {
-          await deleteDeck(selectedDeck.id);
-          setIsModalVisible(false);
-          setSelectedDeck(null);
-          fetchDecks();
-        }
-        setDuoModalVisible(false);
+    Alert.alert("Delete Deck", "Are you sure you want to delete this deck?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          if (selectedDeck?.id) {
+            // Added an additional check to satisfy TypeScript
+            await deleteDeck(selectedDeck.id);
+            setIsModalVisible(false);
+            setSelectedDeck(null);
+            fetchDecks(); // Refresh the list
+          }
+        },
       },
-    });
-    setDuoModalVisible(true);
+    ]);
   };
 
   const handleEditDeck = () => {
@@ -119,110 +100,23 @@ const HomeScreen: React.FC = () => {
 
   const handleTakeQuiz = () => {
     if (!selectedDeck || !selectedDeck.id || !selectedDeck.title) {
-      setDuoModalConfig({
-        title: 'No Deck Selected',
-        message: 'Please select a deck to take a quiz.',
-        icon: 'alert-circle',
-        iconColor: '#FF9600',
-      });
-      setDuoModalVisible(true);
+      // Added check for id and title
+      Alert.alert("No Deck Selected", "Please select a deck to take a quiz.");
       return;
     }
     setIsModalVisible(false);
     router.push({
       pathname: `/quiz/[quizId]`,
-      params: { quizId: selectedDeck.id, deckId: selectedDeck.id, title: selectedDeck.title },
+      params: { deckId: selectedDeck.id, title: selectedDeck.title },
     });
   };
 
-  const handleImportPress = () => {
-    router.push('/import');
-  };
-
-  const getTotalCards = (): number => {
-    return decks.reduce((total: number, deck: Deck) => total + (deck.cards?.length || 0), 0);
-  };
-
-  const getStreak = () => {
-    // Placeholder for streak functionality
-    return 7;
-  };
-
-  const StatsCard = ({ icon, label, value, color, bgColor }: { icon: any; label: string; value: number; color: string; bgColor: string }) => (
-    <View style={[styles.statCard, { backgroundColor: bgColor }]}>
-      <View style={styles.statIconContainer}>
-        <Ionicons name={icon} size={32} color={color} />
-      </View>
-      <Text style={[styles.statValue, { color }]}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-
-  const QuickActionButton = ({ icon, label, onPress, color }: { icon: any; label: string; onPress: () => void; color: string }) => (
-    <Pressable 
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.quickActionButton,
-        { backgroundColor: color },
-        pressed && styles.quickActionPressed
-      ]}
-    >
-      <Ionicons name={icon} size={28} color="#fff" />
-      <Text style={styles.quickActionLabel}>{label}</Text>
-    </Pressable>
-  );
-
   const ListHeader = () => (
     <View style={styles.listHeaderContainer}>
-      {/* Stats Section */}
-      <View style={styles.statsRow}>
-        <StatsCard 
-          icon="flame" 
-          label="Day Streak" 
-          value={getStreak()} 
-          color="#FF9600"
-          bgColor="#FFF4E6"
-        />
-        <StatsCard 
-          icon="book" 
-          label="Decks" 
-          value={decks.length} 
-          color="#1CB0F6"
-          bgColor="#E6F7FF"
-        />
-        <StatsCard 
-          icon="layers" 
-          label="Cards" 
-          value={getTotalCards()} 
-          color="#58CC02"
-          bgColor="#F0FFE6"
-        />
-      </View>
-
-      {/* Quick Actions */}
-      <View style={styles.quickActionsContainer}>
-        <Text style={styles.quickActionsTitle}>Quick Actions</Text>
-        <View style={styles.quickActionsRow}>
-          <QuickActionButton 
-            icon="add-circle" 
-            label="New Deck" 
-            onPress={handleAddButtonPress}
-            color="#58CC02"
-          />
-          <QuickActionButton 
-            icon="cloud-download" 
-            label="Import" 
-            onPress={handleImportPress}
-            color="#1CB0F6"
-          />
-        </View>
-      </View>
-      
-      {/* Section Title */}
-      <View style={styles.sectionTitleContainer}>
-        <Ionicons name="library" size={24} color="#3C3C3C" />
-        <Text style={styles.sectionTitle}>My Learning Path</Text>
-      </View>
+      <Text style={styles.listTitle}>Your Decks</Text>
+      <TouchableOpacity style={styles.addButton} onPress={handleAddButtonPress}>
+        <Ionicons name="add-outline" size={30} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 
@@ -236,35 +130,27 @@ const HomeScreen: React.FC = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor="#58CC02" />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
 
-        {/* Duolingo-style Header */}
         <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View style={styles.logoContainer}>
-              <Image
-                source={require("../assets/images/Duo.png")}
-                style={styles.duoIcon}
-              />
-              <Text style={styles.appTitle}>DuoRecall</Text>
-            </View>
-            <TouchableOpacity style={styles.profileButton}>
-              <Ionicons name="person-circle" size={40} color="#AFAFAF" />
-            </TouchableOpacity>
+          <View style={styles.greetingTextContainer}>
+            <Text style={styles.greetingHello}>Hello!</Text>
+            <Text style={styles.greetingWelcome}>
+              Welcome to DuoRecall Library.
+            </Text>
           </View>
-          
-          <View style={styles.greetingContainer}>
-            <Text style={styles.greetingText}>Keep it up! 💪</Text>
-            <Text style={styles.subGreetingText}>You're doing great today</Text>
-          </View>
+          <Image
+            source={require("../assets/images/Duo.png")}
+            style={styles.illustration}
+          />
         </View>
 
         <FlatList
-          data={decks.filter((item: Deck) => item.id !== undefined)}
-          keyExtractor={(item: Deck) => item.id!}
-          renderItem={({ item }: { item: Deck }) => (
+          data={decks.filter(item => item.id !== undefined)}
+          keyExtractor={(item) => item.id!}
+          renderItem={({ item }) => (
             <Card item={item as Deck} onPress={handleCardPress} />
           )}
           ListHeaderComponent={ListHeader}
@@ -274,7 +160,6 @@ const HomeScreen: React.FC = () => {
               ? styles.emptyListContainer
               : styles.filledListContainer
           }
-          showsVerticalScrollIndicator={false}
         />
 
         {isFormVisible && (
@@ -294,186 +179,90 @@ const HomeScreen: React.FC = () => {
             onDeleteDeck={handleDeleteDeck}
           />
         )}
-
-        <DuoModal
-          visible={duoModalVisible}
-          title={duoModalConfig.title}
-          message={duoModalConfig.message}
-          icon={duoModalConfig.icon}
-          iconColor={duoModalConfig.iconColor}
-          buttons={
-            duoModalConfig.onConfirm
-              ? [
-                  {
-                    text: 'Cancel',
-                    onPress: () => setDuoModalVisible(false),
-                    style: 'secondary',
-                  },
-                  {
-                    text: 'Delete',
-                    onPress: duoModalConfig.onConfirm,
-                    style: 'destructive',
-                  },
-                ]
-              : [
-                  {
-                    text: 'OK',
-                    onPress: () => setDuoModalVisible(false),
-                    style: 'primary',
-                  },
-                ]
-          }
-          onClose={() => setDuoModalVisible(false)}
-        />
       </SafeAreaView>
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#f5f5f5",
+    marginTop: Platform.OS == "web" ? 0 : Platform.OS == "ios" ? 10 : 12,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#f1f5f9",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#777",
-    fontFamily: "FeatherBold",
+    color: "#4a5568",
   },
   header: {
-    backgroundColor: "#58CC02",
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
-  },
-  logoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  duoIcon: {
-    width: 40,
-    height: 45,
-    marginRight: 8,
-    backgroundColor: "#ffffff",
-    borderRadius: 30,
-  },
-  appTitle: {
-    fontSize: 20,
-    fontFamily: "FeatherBold",
-    color: "#FFFFFF",
-  },
-  profileButton: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  greetingContainer: {
-    marginTop: 4,
-  },
-  greetingText: {
-    fontSize: 22,
-    fontFamily: "FeatherBold",
-    color: "#FFFFFF",
-  },
-  subGreetingText: {
-    fontSize: 16,
-    fontFamily: "FeatherBold",
-    color: "#FFFFFF",
-    opacity: 0.9,
-    marginTop: 2,
-  },
-  listHeaderContainer: {
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingVertical: 15,
+    backgroundColor: "#fff",
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    marginBottom: 10,
   },
-  statsRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginBottom: 24,
-  },
-  statCard: {
+  greetingTextContainer: {
     flex: 1,
-    borderRadius: 16,
-    padding: 16,
-    alignItems: "center",
-    borderWidth: 2,
-    borderBottomWidth: 4,
-    borderColor: "#E5E5E5",
   },
-  statIconContainer: {
-    marginBottom: 8,
-  },
-  statValue: {
-    fontSize: 28,
+  greetingHello: {
+    fontSize: 30,
     fontFamily: "FeatherBold",
-    marginBottom: 2,
+    color: "#1a202c",
   },
-  statLabel: {
-    fontSize: 10,
-    fontFamily: "FeatherBold",
-    color: "#777",
-  },
-  quickActionsContainer: {
-    marginBottom: 24,
-  },
-  quickActionsTitle: {
+  greetingWelcome: {
     fontSize: 18,
     fontFamily: "FeatherBold",
-    color: "#3C3C3C",
-    marginBottom: 12,
+    color: "#4a5568",
+    marginTop: 4,
   },
-  quickActionsRow: {
-    flexDirection: "row",
-    gap: 12,
+  illustration: {
+    width: 70,
+    height: 80,
+    marginLeft: 10,
   },
-  quickActionButton: {
-    flex: 1,
+  listHeaderContainer: {
+    width: Platform.OS == "web" ? "90%" : "100%",
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderBottomWidth: 4,
-    borderColor: "rgba(0,0,0,0.1)",
-    gap: 8,
+    alignSelf: "center",
+    marginTop: 40,
+    marginBottom: 5,
+    paddingVertical: 10,
+    borderWidth: 3,
+    borderBottomWidth: 5,
+    borderRadius: 25,
+    paddingHorizontal: 10,
+    borderColor: "#59c903ff",
   },
-  quickActionPressed: {
-    transform: [{ translateY: 2 }],
-    borderBottomWidth: 2,
-  },
-  quickActionLabel: {
-    fontSize: 15,
-    fontFamily: "FeatherBold",
-    color: "#FFFFFF",
-  },
-  sectionTitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 16,
-  },
-  sectionTitle: {
+  listTitle: {
     fontSize: 20,
     fontFamily: "FeatherBold",
-    color: "#3C3C3C",
+    color: "#2d3748",
+  },
+  addButton: {
+    backgroundColor: "#59c903ff",
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
   },
   filledListContainer: {
     paddingBottom: 20,

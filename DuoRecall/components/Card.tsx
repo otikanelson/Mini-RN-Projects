@@ -1,161 +1,96 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Deck } from "../types";
+
+// This is the main card component, styled to look like a Duolingo "skill" icon.
+// We'll use a large, rounded container with a solid color and a subtle shadow.
 
 type CardProps = {
   item: Deck;
   onPress: (deck: Deck) => void;
 };
 
-const deckColors = [
-  { bg: '#FFC800', icon: '#FF9600' },
-  { bg: '#58CC02', icon: '#46A302' },
-  { bg: '#1CB0F6', icon: '#1899D6' },
-  { bg: '#CE82FF', icon: '#B565E8' },
-  { bg: '#FF4B4B', icon: '#EA2B2B' },
-  { bg: '#00CD9C', icon: '#00B386' },
-];
-
 const Card: React.FC<CardProps> = ({ item, onPress }) => {
   const cardCount = item.cards?.length ?? 0;
-  const colorIndex = Math.abs(item.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % deckColors.length;
-  const colors = deckColors[colorIndex];
-  
-  const progress = cardCount > 0 ? Math.min((cardCount / 20) * 100, 100) : 0;
 
   return (
-    <Pressable 
-      onPress={() => onPress(item)} 
-      style={({ pressed }) => [
-        styles.cardContainer,
-        pressed && styles.cardPressed
-      ]}
-    >
-      <View style={styles.cardContent}>
-        {/* Icon Circle */}
-        <View style={[styles.iconCircle, { backgroundColor: colors.bg }]}>
-          <View style={[styles.iconInner, { backgroundColor: colors.icon }]}>
-            <Ionicons name="book" size={28} color="#FFFFFF" />
-          </View>
+    <TouchableOpacity onPress={() => onPress(item)} style={styles.cardContainer}>
+      <View style={styles.contentWrapper}>
+        {/* Placeholder for a deck-specific image, like Duo's character icons */}
+        <View style={styles.imagePlaceholder}>
+          <Ionicons name="folder-open-outline" size={40} color="#fff" />
         </View>
-
-        {/* Text Content */}
-        <View style={styles.textContent}>
-          <Text style={styles.cardTitle} numberOfLines={1}>{item.title}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.cardTitle}>{item.title}</Text>
           <Text style={styles.cardDescription} numberOfLines={1}>{item.description}</Text>
-          
-          {/* Progress Bar */}
-          {cardCount > 0 && (
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: colors.bg }]} />
-              </View>
-              <Text style={styles.cardCountText}>{cardCount} cards</Text>
-            </View>
-          )}
-          
-          {cardCount === 0 && (
-            <Text style={styles.emptyText}>No cards yet</Text>
-          )}
-        </View>
-
-        {/* Arrow */}
-        <View style={styles.arrowContainer}>
-          <Ionicons name="chevron-forward" size={24} color="#AFAFAF" />
         </View>
       </View>
-
-      {/* Bottom Border for 3D effect */}
-      <View style={[styles.cardBorder, { backgroundColor: colors.icon }]} />
-    </Pressable>
+      {cardCount > 0 && (
+        <View style={styles.cardBadge}>
+          <Text style={styles.badgeText}>{cardCount}</Text>
+        </View>
+      )}
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
+    backgroundColor: "#fff",
+    borderRadius: 15,
     marginHorizontal: 20,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderBottomWidth: 4,
-    borderColor: "#E5E5E5",
-    overflow: "hidden",
-  },
-  cardPressed: {
-    transform: [{ translateY: 2 }],
-    borderBottomWidth: 2,
-  },
-  cardContent: {
+    marginVertical: 10,
+    padding: 15,
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    justifyContent: "space-between",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  iconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  iconInner: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
+  contentWrapper: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  textContent: {
-    flex: 1,
-    marginRight: 8,
+  imagePlaceholder: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#59c903ff",
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textContainer: {
+    marginLeft: 15,
+    flexShrink: 1,
   },
   cardTitle: {
-    fontSize: 19,
+    fontSize: 18,
     fontFamily: "FeatherBold",
-    color: "#3C3C3C",
-    marginBottom: 4,
+    color: "#2d3748",
   },
   cardDescription: {
     fontSize: 14,
-    color: "#AFAFAF",
+    color: "#4a5568",
     fontFamily: "FeatherBold",
-    marginBottom: 8,
+    marginTop: 4,
   },
-  progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+  cardBadge: {
+    backgroundColor: "#1cb0f6",
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
-  progressBar: {
-    flex: 1,
-    height: 8,
-    backgroundColor: "#E5E5E5",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  cardCountText: {
+  badgeText: {
+    color: "#fff",
     fontSize: 12,
     fontFamily: "FeatherBold",
-    color: "#AFAFAF",
-    minWidth: 55,
-  },
-  emptyText: {
-    fontSize: 12,
-    fontFamily: "FeatherBold",
-    color: "#AFAFAF",
-  },
-  arrowContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cardBorder: {
-    height: 0,
   },
 });
 

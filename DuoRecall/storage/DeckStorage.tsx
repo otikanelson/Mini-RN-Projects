@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Deck, CardData } from '../types';
+import { Deck, DeckContent, CardData } from '../types';
 
 const DECKS_STORAGE_KEY = 'decks';
 
@@ -27,7 +27,7 @@ export const loadDeckContent = async (deckId: string): Promise<Deck | null> => {
     }
 };
 
-export const loadQuizContent = async (deckId: string): Promise<Deck | null> => {
+export const loadQuizContent = async (deckId: string): Promise<DeckContent | null> => {
     try {
         const serializedDecks = await AsyncStorage.getItem(DECKS_STORAGE_KEY);
         if (serializedDecks === null) {
@@ -42,9 +42,7 @@ export const loadQuizContent = async (deckId: string): Promise<Deck | null> => {
         if (deck) {
             return {
                 id: deck.id,
-                title: deck.title,
-                description: deck.description,
-                cards: deck.cards,
+                content: deck.cards,
             };
         }
         return null;
@@ -54,14 +52,18 @@ export const loadQuizContent = async (deckId: string): Promise<Deck | null> => {
     }
 };
 
-export const loadAllDecks = async (): Promise<Deck[]> => {
+export const loadAllDecks = async (): Promise<Partial<Deck>[]> => {
     try {
         const serializedDecks = await AsyncStorage.getItem(DECKS_STORAGE_KEY);
         if (serializedDecks === null) {
             return [];
         }
         const decks: Deck[] = JSON.parse(serializedDecks);
-        return decks; // Return full decks with cards
+        return decks.map(deck => ({
+            id: deck.id,
+            title: deck.title,
+            description: deck.description,
+        }));
     } catch (error) {
         console.error('Error loading all decks:', error);
         return [];

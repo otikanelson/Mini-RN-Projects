@@ -4,7 +4,7 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,7 +24,7 @@ const DeckModal: React.FC<DeckModalProps> = ({
   onClose,
   onEditDeck,
   onTakeQuiz,
-  onDeleteDeck,
+  onDeleteDeck, // Destructured the new prop
 }) => {
   return (
     <Modal
@@ -33,65 +33,34 @@ const DeckModal: React.FC<DeckModalProps> = ({
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <Pressable
+      <TouchableOpacity
         style={styles.centeredView}
+        activeOpacity={1}
         onPress={onClose}
       >
-        <Pressable style={styles.modalView} onPress={(e) => e.stopPropagation()}>
-          <Pressable 
-            style={({ pressed }) => [
-              styles.closeButtonIcon,
-              pressed && styles.closeButtonPressed
-            ]}
-            onPress={onClose}
-          >
-            <Ionicons name="close-circle" size={32} color="#AFAFAF" />
-          </Pressable>
-          
-          <View style={styles.headerContainer}>
-            <View style={styles.iconContainer}>
-              <Ionicons name="book" size={32} color="#1CB0F6" />
-            </View>
-            <Text style={styles.modalTitle}>{deckTitle}</Text>
-          </View>
-
-          <Pressable 
-            style={({ pressed }) => [
-              styles.optionButton,
-              styles.editButton,
-              pressed && styles.optionButtonPressed
-            ]}
-            onPress={onEditDeck}
-          >
-            <Ionicons name="create" size={22} color="#FFFFFF" />
-            <Text style={styles.buttonText}>Edit Cards</Text>
-          </Pressable>
-
-          <Pressable 
-            style={({ pressed }) => [
-              styles.optionButton,
-              styles.quizButton,
-              pressed && styles.optionButtonPressed
-            ]}
-            onPress={onTakeQuiz}
-          >
-            <Ionicons name="play-circle" size={22} color="#FFFFFF" />
-            <Text style={styles.buttonText}>Start Quiz</Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.optionButton,
-              styles.deleteButton,
-              pressed && styles.optionButtonPressed
-            ]}
+        <View style={styles.modalView}>
+          <TouchableOpacity style={styles.closeButtonIcon} onPress={onClose}>
+            <Ionicons name="close-circle" size={30} color="#888" />
+          </TouchableOpacity>
+          <Text style={styles.modalTitle}>{deckTitle}</Text>
+          {/* Edit Deck Button */}
+          <TouchableOpacity style={styles.optionButton} onPress={onEditDeck}>
+            <Text style={styles.buttonText}>Edit Deck Content</Text>
+          </TouchableOpacity>
+          {/* Take Quiz Button */}
+          <TouchableOpacity style={styles.optionButton} onPress={onTakeQuiz}>
+            <Text style={styles.buttonText}>Take Quiz</Text>
+          </TouchableOpacity>
+          {/* Delete Deck Button */}
+          <TouchableOpacity
+            style={[styles.optionButton, styles.deleteButton]}
             onPress={onDeleteDeck}
           >
-            <Ionicons name="trash" size={22} color="#FFFFFF" />
             <Text style={styles.buttonText}>Delete Deck</Text>
-          </Pressable>
-        </Pressable>
-      </Pressable>
+          </TouchableOpacity>
+
+        </View>
+      </TouchableOpacity>
     </Modal>
   );
 };
@@ -101,78 +70,54 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   modalView: {
-    width: Platform.OS == "web" ? "40%" : "85%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 24,
+    width: Platform.OS == "web" ? "40%" : "80%",
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 30,
     alignItems: "stretch",
-    borderWidth: 2,
-    borderBottomWidth: 4,
-    borderColor: "#E5E5E5",
-  },
-  closeButtonIcon: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    padding: 4,
-    zIndex: 1,
-  },
-  closeButtonPressed: {
-    opacity: 0.6,
-  },
-  headerContainer: {
-    alignItems: "center",
-    marginBottom: 24,
-    marginTop: 8,
-  },
-  iconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "#E6F7FF",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   modalTitle: {
-    fontSize: 22,
+    fontSize: 18,
     fontFamily: "FeatherBold",
-    color: "#3C3C3C",
+    marginBottom: 20,
     textAlign: "center",
   },
   optionButton: {
-    flexDirection: "row",
+    backgroundColor: "#1e90ff",
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 10,
     alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    borderRadius: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderBottomWidth: 4,
-    borderColor: "rgba(0,0,0,0.1)",
-  },
-  optionButtonPressed: {
-    transform: [{ translateY: 2 }],
-    borderBottomWidth: 2,
-  },
-  editButton: {
-    backgroundColor: "#1CB0F6",
-  },
-  quizButton: {
-    backgroundColor: "#58CC02",
   },
   deleteButton: {
-    backgroundColor: "#FF4B4B",
+    backgroundColor: "#ef4444",
+  },
+  closeButton: {
+    backgroundColor: "#eee",
+    borderRadius: 8,
+    padding: 15,
+    marginTop: 10,
+    alignItems: "center",
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: "white",
     fontFamily: "FeatherBold",
-    fontSize: 17,
+    fontSize: 16,
+  },
+  closeButtonIcon: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    padding: 5,
   },
 });
 
