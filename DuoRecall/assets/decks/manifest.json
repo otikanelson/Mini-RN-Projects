@@ -26,6 +26,15 @@
       "cardCount": 30,
       "fileName": "english_vocabulary.csv",
       "downloadUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/assets/decks/english_vocabulary.csv"
+    },
+    {
+      "id": "spanish-advanced",
+      "title": "Spanish Advanced",
+      "description": "Advanced Spanish vocabulary, complex phrases, and subjunctive mood mastery",
+      "language": "Spanish",
+      "cardCount": 40,
+      "fileName": "spanish_advanced.csv",
+      "downloadUrl": "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/DuoRecall/assets/decks/spanish_advanced.csv"
     }
   ]
 }
